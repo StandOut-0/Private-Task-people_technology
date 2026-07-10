@@ -1,0 +1,79 @@
+3. 테이블 정의
+
+3.1 PARTICIPANT
+- 목적: 연구 참여자의 기본 정보를 저장한다.
+- 주요 역할: 가명식별번호 기반 참여자 관리, 상태 관리, 등록 이력 관리
+- 관련 테이블: PARTICIPANT_ACCOUNT, PARTICIPANT_DEVICE, SYNC_SESSION, LIFESTYLE_DATA, DOWNLOAD_PARTICIPANT
+- 특징: participant_code를 통해 가명식별 체계를 구현한다.
+
+3.2 PARTICIPANT_ACCOUNT
+- 목적: 참여자의 로그인 및 인증 정보를 저장한다.
+- 주요 역할: 로그인 상태 관리, 세션 토큰 관리, 로그인 실패 횟수 관리
+- 관련 테이블: PARTICIPANT
+- 특징: 인증 정보와 기본 인적 정보를 분리하여 설계하였다.
+
+3.3 DEVICE
+- 목적: 스마트워치와 연계 기기 정보를 저장한다.
+- 주요 역할: 기기 식별, 모델/버전 관리, 상태 관리
+- 관련 테이블: PARTICIPANT_DEVICE
+- 특징: 장치 모델, 펌웨어, 앱 버전 및 운영체제 정보를 함께 관리한다.
+
+3.4 PARTICIPANT_DEVICE
+- 목적: 참여자와 장치의 배정 관계를 저장한다.
+- 주요 역할: 장치 할당/회수 이력 관리, 매핑 상태 관리
+- 관련 테이블: PARTICIPANT, DEVICE, SYNC_SESSION
+- 특징: 시간에 따라 변경되는 배정 상태를 추적할 수 있다.
+
+3.5 SYNC_SESSION
+- 목적: 데이터 동기화 단위를 저장한다.
+- 주요 역할: 동기화 시작/종료 시간 관리, 성공/실패 건수 관리
+- 관련 테이블: PARTICIPANT, PARTICIPANT_DEVICE, COLLECTION_LOG
+- 특징: 데이터 동기화 과정을 세션 단위로 관리하여 수집 흐름을 추적한다.
+
+3.6 COLLECTION_LOG
+- 목적: 수집 요청과 처리 결과를 저장한다.
+- 주요 역할: API 호출 이력 관리, 요청/응답 추적, 오류 분석
+- 관련 테이블: SYNC_SESSION, LIFESTYLE_DATA
+- 특징: request_id, transaction_id, http_status, error_message를 통해 장애 분석이 가능하다.
+
+3.7 ADMIN_USER
+- 목적: 모니터링 웹 관리자 계정을 저장한다.
+- 주요 역할: 관리자 로그인, 권한 코드 관리, 계정 활성화 관리
+- 관련 테이블: DOWNLOAD_HISTORY
+- 특징: 운영자 권한을 코드 기반으로 관리한다.
+
+3.8 MEASUREMENT_TYPE
+- 목적: 수집 가능한 라이프로그 항목의 종류를 정의한다.
+- 주요 역할: 측정 항목 분류, 단위 관리, 표시 순서 관리
+- 관련 테이블: LIFESTYLE_DATA
+- 특징: 새 지표가 추가되어도 구조 변경 없이 확장 가능하다.
+
+3.9 LIFESTYLE_DATA
+- 목적: 실제 라이프로그 측정값을 저장한다.
+- 주요 역할: 시계열 데이터 저장, 값 유형 관리, 수집 경로 추적
+- 관련 테이블: PARTICIPANT, MEASUREMENT_TYPE, COLLECTION_LOG
+- 특징: 수치형, 텍스트형, JSON 메타데이터를 함께 저장할 수 있으며, 수집 로그와 연계하여 데이터의 출처를 추적한다.
+
+3.10 DOWNLOAD_HISTORY
+- 목적: CSV 다운로드 요청 이력을 저장한다.
+- 주요 역할: 다운로드 조건, 파일명, 다운로드 시각 관리
+- 관련 테이블: ADMIN_USER, DOWNLOAD_PARTICIPANT
+- 특징: 운영 감사 및 다운로드 추적에 사용된다.
+
+3.11 DOWNLOAD_PARTICIPANT
+- 목적: 다운로드 대상을 저장한다.
+- 주요 역할: 특정 다운로드 요청에 포함된 참여자 목록 관리
+- 관련 테이블: DOWNLOAD_HISTORY, PARTICIPANT
+- 특징: DOWNLOAD_HISTORY와 PARTICIPANT 간의 다대다(N:M) 관계를 해소하기 위한 교차 엔티티이다.
+
+3.12 CODE_MASTER
+- 목적: 코드 그룹을 저장한다.
+- 주요 역할: 코드 도메인 분류
+- 관련 테이블: CODE_DETAIL
+- 특징: 상태, 역할, 분류값의 논리적 그룹을 관리한다.
+
+3.13 CODE_DETAIL
+- 목적: 코드 그룹에 속한 상세 코드를 저장한다.
+- 주요 역할: 코드값, 코드명, 설명, 활성 여부 관리
+- 관련 테이블: CODE_MASTER
+- 특징: 상태값과 분류값을 표준화하기 위해 사용된다.

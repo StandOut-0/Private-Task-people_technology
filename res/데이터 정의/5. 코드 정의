@@ -1,0 +1,36 @@
+5. 코드 정의
+
+본 시스템에서는 상태값, 역할값, 분류값 등을 문자열 하드코딩 대신 코드 테이블로 관리한다.
+
+5.1 코드 관리 방식
+- CODE_MASTER: 코드 도메인 정의
+- CODE_DETAIL: 실제 코드 값 및 의미 정의
+- 각 코드 컬럼은 CODE_DETAIL의 code_value를 기준으로 관리하도록 설계하였다.
+
+5.2 예시 코드 도메인
+- PARTICIPANT_STATUS
+  - ACTIVE, INACTIVE, WITHDRAWN
+- DEVICE_STATUS
+  - READY, ASSIGNED, FAULT, RETIRED
+- LOGIN_STATUS
+  - LOGIN_OK, LOGIN_FAIL, LOCKED
+- SYNC_STATUS
+  - PENDING, SUCCESS, FAILED
+- COLLECTION_STATUS
+  - PENDING, SUCCESS, FAILED
+- MEASUREMENT_CATEGORY
+  - ACTIVITY, SLEEP, HEART_RATE, BLOOD_OXYGEN, ENERGY
+- MEASUREMENT_VALUE_TYPE
+  - NUMERIC, TEXT, JSON
+- USER_ROLE
+  - ADMIN, SUPERVISOR
+- SOURCE_TYPE
+  - WATCH, APP, SERVER
+
+5.3 코드 활용 기대효과
+- 상태값의 일관된 관리가 가능하다.
+- 운영 중 새로운 상태값 추가가 용이하다.
+- 화면 표시명과 시스템 로직을 분리할 수 있다.
+- 데이터 품질 관리와 감사 대응에 유리하다.
+
+※ 실제 코드값은 시스템 운영 정책에 따라 CODE_DETAIL 테이블에서 관리하며, 본 문서의 코드는 예시이다.

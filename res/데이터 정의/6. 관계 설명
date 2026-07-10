@@ -1,0 +1,53 @@
+6. 관계 설명
+
+6.1 PARTICIPANT ↔ PARTICIPANT_ACCOUNT
+- 1명의 참여자가 여러 개의 인증 레코드를 가질 수 있다.
+- 참여자 기본 정보와 인증 정보의 책임을 분리한다.
+
+6.2 PARTICIPANT ↔ PARTICIPANT_DEVICE
+- 1명의 참여자는 시간에 따라 여러 장치에 배정될 수 있으며, 하나의 장치도 시간에 따라 여러 참여자에게 배정될 수 있다.
+- 이를 관리하기 위해 교차 엔티티인 PARTICIPANT_DEVICE를 사용하였다.
+
+6.3 DEVICE ↔ PARTICIPANT_DEVICE
+- DEVICE는 PARTICIPANT_DEVICE를 통해 참여자와 연결된다.
+- 장치 배정/회수 이력을 관리할 수 있다.
+
+6.4 PARTICIPANT ↔ SYNC_SESSION
+- 참여자별로 여러 동기화 세션이 발생할 수 있다.
+- 각 세션은 특정 참여자의 데이터 수집 흐름을 나타낸다.
+
+6.5 PARTICIPANT_DEVICE ↔ SYNC_SESSION
+- 동기화 세션은 특정 장치와 연결된 시점의 활동으로 관리된다.
+- 장치 기반 추적이 가능하다.
+
+6.6 SYNC_SESSION ↔ COLLECTION_LOG
+- 하나의 동기화 세션은 여러 수집 요청 로그를 가질 수 있다.
+- 서버에서 발생한 요청/응답 이력을 추적한다.
+
+6.7 COLLECTION_LOG ↔ LIFESTYLE_DATA
+- 각 측정값은 어떤 수집 로그(COLLECTION_LOG)를 통해 저장되었는지 추적할 수 있다.
+- 수집 실패와 측정값 간의 연관성을 분석할 수 있다.
+
+6.8 PARTICIPANT ↔ LIFESTYLE_DATA
+- 참여자별 측정값을 직접 조회할 수 있다.
+- 분석 및 모니터링 시 기본 대상자 기준이 된다.
+
+6.9 MEASUREMENT_TYPE ↔ LIFESTYLE_DATA
+- 측정값은 특정 측정 항목에 속한다.
+- 항목 코드와 단위, 분류 기준을 재사용한다.
+
+6.10 ADMIN_USER ↔ DOWNLOAD_HISTORY
+- 관리자가 여러 번의 다운로드 요청을 수행할 수 있다.
+- 다운로드 행위의 주체와 이력을 추적한다.
+
+6.11 DOWNLOAD_HISTORY ↔ DOWNLOAD_PARTICIPANT
+- 하나의 다운로드 요청은 여러 대상자를 포함할 수 있다.
+- 다운로드 대상자 목록을 분리하여 관리한다.
+
+6.12 PARTICIPANT ↔ DOWNLOAD_PARTICIPANT
+- PARTICIPANT는 DOWNLOAD_PARTICIPANT를 통해 DOWNLOAD_HISTORY와 연결된다.
+- 이를 통해 특정 참여자가 어떤 다운로드 요청에 포함되었는지 추적할 수 있다.
+
+6.13 CODE_MASTER ↔ CODE_DETAIL
+- 코드 그룹과 코드 상세값을 분리하여 관리한다.
+- 상태값·분류값을 체계적으로 확장할 수 있다.

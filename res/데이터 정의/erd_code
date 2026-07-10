@@ -1,0 +1,200 @@
+```mermaid
+erDiagram
+    PARTICIPANT ||--o{ PARTICIPANT_ACCOUNT : authenticates
+    PARTICIPANT ||--o{ PARTICIPANT_DEVICE : assigned_device
+    DEVICE ||--o{ PARTICIPANT_DEVICE : assigned_to
+    PARTICIPANT ||--o{ SYNC_SESSION : sync_source
+    PARTICIPANT_DEVICE ||--o{ SYNC_SESSION : sync_device
+    SYNC_SESSION ||--o{ COLLECTION_LOG : records
+    PARTICIPANT ||--o{ LIFESTYLE_DATA : generates
+    MEASUREMENT_TYPE ||--o{ LIFESTYLE_DATA : classifies
+    COLLECTION_LOG ||--o{ LIFESTYLE_DATA : stores
+    ADMIN_USER ||--o{ DOWNLOAD_HISTORY : downloads
+    DOWNLOAD_HISTORY ||--o{ DOWNLOAD_PARTICIPANT : includes
+    PARTICIPANT ||--o{ DOWNLOAD_PARTICIPANT : selected_for
+    CODE_MASTER ||--o{ CODE_DETAIL : contains
+
+    PARTICIPANT {
+        %% 연구 참여자(가명정보)를 관리하는 기본 엔티티
+        bigint participant_id PK
+        varchar participant_code UK "가명식별번호"
+        varchar participant_status_code "CODE_DETAIL.code_value 참조"
+        varchar gender_code "CODE_DETAIL.code_value 참조"
+        int birth_year
+        datetime registered_at
+        datetime created_at
+        datetime updated_at
+        varchar created_by "관리자 ID 또는 시스템 계정"
+        varchar updated_by "관리자 ID 또는 시스템 계정"
+    }
+
+    PARTICIPANT_ACCOUNT {
+        %% 앱 로그인 및 인증 정보를 관리
+        bigint participant_account_id PK
+        bigint participant_id FK
+        varchar login_code UK "식별번호 기반 로그인값"
+        varchar login_status_code "CODE_DETAIL.code_value 참조"
+        int login_fail_count
+        datetime last_login_at
+        varchar session_token_hash
+        datetime token_expires_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    DEVICE {
+        %% 갤럭시워치 및 연계 단말 정보를 관리
+        bigint device_id PK
+        varchar device_serial_no UK
+        varchar device_type_code "CODE_DETAIL.code_value 참조"
+        varchar device_model
+        varchar firmware_version
+        varchar app_version
+        varchar android_version
+        varchar phone_model
+        varchar device_status_code "CODE_DETAIL.code_value 참조"
+        datetime registered_at
+        datetime created_at
+        datetime updated_at
+        varchar created_by "관리자 ID 또는 시스템 계정"
+        varchar updated_by "관리자 ID 또는 시스템 계정"
+    }
+
+    PARTICIPANT_DEVICE {
+        %% 대상자와 장치의 배정 이력을 관리
+        bigint participant_device_id PK
+        bigint participant_id FK
+        bigint device_id FK
+        datetime assigned_at
+        datetime unassigned_at
+        varchar mapping_status_code "CODE_DETAIL.code_value 참조"
+        text remark
+        datetime created_at
+        datetime updated_at
+        varchar created_by "관리자 ID 또는 시스템 계정"
+        varchar updated_by "관리자 ID 또는 시스템 계정"
+    }
+
+    SYNC_SESSION {
+        %% 워치-앱-서버 간 데이터 동기화 세션을 관리
+        bigint sync_session_id PK
+        bigint participant_id FK
+        bigint participant_device_id FK
+        datetime started_at
+        datetime finished_at
+        varchar sync_status_code "CODE_DETAIL.code_value 참조"
+        varchar source_code "CODE_DETAIL.code_value 참조"
+        int total_records
+        int success_records
+        int failed_records
+        datetime created_at
+        datetime updated_at
+        varchar created_by "관리자 ID 또는 시스템 계정"
+        varchar updated_by "관리자 ID 또는 시스템 계정"
+    }
+
+    COLLECTION_LOG {
+        %% 데이터 수집 및 API 전송 이력을 관리
+        bigint collection_log_id PK
+        bigint sync_session_id FK
+        bigint participant_id FK
+        bigint participant_device_id FK
+        varchar endpoint
+        varchar api_version
+        varchar request_id UK
+        varchar transaction_id
+        datetime received_at
+        datetime processed_at
+        varchar collection_status_code "CODE_DETAIL.code_value 참조"
+        int http_status
+        text error_message
+        int retry_count
+        datetime created_at
+        datetime updated_at
+    }
+
+    ADMIN_USER {
+        %% 모니터링 웹 관리자 계정을 관리
+        bigint admin_user_id PK
+        varchar login_id UK
+        varchar password_hash
+        varchar role_code "CODE_DETAIL.code_value 참조"
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+        datetime last_login_at
+    }
+
+    MEASUREMENT_TYPE {
+        %% 라이프로그 측정 항목의 기준 정보를 관리
+        bigint measurement_type_id PK
+        varchar metric_code UK
+        varchar metric_name
+        varchar unit
+        varchar category_code "CODE_DETAIL.code_value 참조"
+        boolean is_active
+        int display_order
+        datetime created_at
+        datetime updated_at
+    }
+
+    LIFESTYLE_DATA {
+        %% 워치에서 수집된 라이프로그 시계열 데이터를 저장
+        bigint lifestyle_data_id PK
+        bigint participant_id FK
+        bigint measurement_type_id FK
+        bigint collection_log_id FK
+        datetime measured_at
+        varchar value_type_code "CODE_DETAIL.code_value 참조"
+        decimal numeric_value
+        varchar value_text
+        json metadata_json
+        varchar source_code "CODE_DETAIL.code_value 참조"
+        datetime created_at
+        datetime updated_at
+    }
+
+    DOWNLOAD_HISTORY {
+        %% 관리자의 CSV 다운로드 이력을 관리
+        bigint download_id PK
+        bigint admin_user_id FK
+        date start_date
+        date end_date
+        varchar filter_condition
+        varchar file_name
+        datetime downloaded_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    DOWNLOAD_PARTICIPANT {
+        %% CSV 다운로드 대상자 목록을 관리
+        bigint download_participant_id PK
+        bigint download_id FK
+        bigint participant_id FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    CODE_MASTER {
+        %% 코드 그룹을 관리
+        bigint code_master_id PK
+        varchar domain_code UK
+        varchar domain_name
+        datetime created_at
+        datetime updated_at
+    }
+
+    CODE_DETAIL {
+        %% 코드 그룹별 상세 코드를 관리
+        bigint code_detail_id PK
+        bigint code_master_id FK
+        varchar code_value
+        varchar code_name
+        varchar description
+        boolean is_active
+        int sort_order
+        datetime created_at
+        datetime updated_at
+    }
+```
