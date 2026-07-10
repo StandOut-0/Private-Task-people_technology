@@ -1,0 +1,10 @@
+Galaxy Watch
+      │
+      ▼
+Android App
+      │
+      ▼
+Backend API
+   │          ▲
+   ▼          │
+Database  Monitoring Web(Admin)
