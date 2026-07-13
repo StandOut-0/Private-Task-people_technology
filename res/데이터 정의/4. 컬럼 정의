@@ -21,7 +21,7 @@
 4.3 PARTICIPANT_ACCOUNT
 - participant_account_id: 참여자 계정 식별자(PK)
 - participant_id: 참여자 식별자(FK)
-- login_code: 로그인용 식별값(Unique)
+- login_code: 인증번호(Unique)
 - login_status_code: 로그인 상태 코드
 - login_fail_count: 로그인 실패 횟수
 - last_login_at: 최근 로그인 시각
