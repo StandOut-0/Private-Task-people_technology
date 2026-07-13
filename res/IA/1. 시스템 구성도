@@ -1,10 +1,12 @@
 Galaxy Watch
-      │
+      ▲
+      │ https restapi 
       ▼
 Android App
-      │
+      ▲
+      │ https rest api
       ▼
 Backend API
-   │          ▲
-   ▼          │
+   │ sql      │ metrics logs
+   ▼          ▼
 Database  Monitoring Web(Admin)
